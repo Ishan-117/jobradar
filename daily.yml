@@ -1,0 +1,29 @@
+name: Daily Job Digest
+
+on:
+  schedule:
+    - cron: '0 8 * * *'    # 8:00 AM UTC every day
+  workflow_dispatch:         # Manual trigger from GitHub UI
+
+jobs:
+  run-scout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run daily scout
+        run: python daily_scout.py
+        env:
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ADZUNA_APP_ID:      ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY:     ${{ secrets.ADZUNA_APP_KEY }}
